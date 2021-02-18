@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        .container {
+            position: relative;
+            font-family:sans-serif;
+            text-align: center; 
+        }
+        .container:after{
+            content : "";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: url("https://c4.wallpaperflare.com/wallpaper/593/957/270/background-mesh-football-sport-wallpaper-preview.jpg") no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+            width: 100%;
+            height: 100%;
+            opacity : 0.4;
+            z-index: -1;
+            
+        }
+        .title{color: white;
+            font-size: xx-large; 
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;  
+        }
+        
+table.center {
+  margin-left: auto; 
+  margin-right: auto;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+tr:hover {background-color:#f5f5f5;}
+        
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+
+$(document).ready(function () {
+    let today = new Date().toISOString().slice(0, 10)
+
+    $.ajax({
+        
+    url: "http://api.isportsapi.com/sport/football/schedule?api_key=mTffqFlZ0ZIrRUqo&date=" +today,
+    type: "get",
+    dataType: "json",
+    success: function (data) {
+        console.log(data);
+        const sortedActivities = data.data.slice().sort((a, b) => a.matchTime - b.matchTime)
+        console.log(sortedActivities);
+            $.each(sortedActivities, function (index, value) {
+                
+                let unix_timestamp = value.matchTime;
+                var date = new Date(unix_timestamp * 1000);
+                var hours = date.getHours();
+                var minutes = "0" + date.getMinutes();
+                var formattedTime = hours + ':' + minutes.substr(-2);
+                var match = $('<tr>');
+                    if(value.status != -14){
+                match.append('<td>'+value.homeName +'</td>')
+                match.append('<td>'+value.awayName +'</td>')
+                match.append('<td><strong>'+value.homeScore + ":" + value.awayScore + '</strong></td>')
+                match.append('<td>'+value.leagueName + '</td>')
+                match.append('<td style="background-color: grey">'+formattedTime + '</td>')
+                    }else{
+                var match = $('<tr style="opacity:0.5;">');
+                match.append('<td>'+value.homeName +'</td>')
+                match.append('<td>'+value.awayName +'</td>')
+                match.append('<td><strong>'+value.homeScore + ":" + value.awayScore + '</strong></td>')
+                match.append('<td>'+value.leagueName + '</td>')
+                match.append('<td>'+formattedTime + '</td>')
+                    }
+                // if (value.status == 1){
+                //     match.append('<td style="background-color:green">' + "First Half"+ '</td>')}
+                //     if (value.status == 2){
+                //     match.append('<td style="background-color:green">' + "Half Time"+ '</td>')}
+                //     if (value.status == 3){
+                //     match.append('<td style="background-color:green">' + "Second Half"+ '</td>')}
+                //     if (value.status == 4){
+                //     match.append('<td style="background-color:green">' + "E.T."+ '</td>')}
+                //     if (value.status == 5){
+                //     match.append('<td style="background-color:green">' + "Penalty"+ '</td>}')}
+                //     if (value.status == -1){
+                //     match.append('<td style="background-color:red">' + "Finished"+ '</td>')};
+                //     if (value.status == -14){
+                //     match.append('<td style="background-color:red">' + "Postponed"+ '</td>')};
+                //     if (value.status == -13){
+                //     match.append('<td style="background-color:red">' + "Interrupted"+ '</td>')};
+                //     if (value.status == -12){
+                //     match.append('<td style="background-color:red">' + "Terminated"+ '</td>')};
+                //     if (value.status == -11){
+                //     match.append('<td style="background-color:blue">' + "TDB"+ '</td>')};
+                    switch(value.status) {
+                        case 1:
+                        match.append('<td style="background-color:green">' + "First Half"+ '</td>')
+                            break;
+                        case 2:
+                        match.append('<td style="background-color:green">' + "Half Time"+ '</td>')
+                            break;
+                        case 3:
+                        match.append('<td style="background-color:green">' + "Second Half"+ '</td>')
+                            break;
+                        case 4:
+                        match.append('<td style="background-color:green">' + "E.T."+ '</td>')
+                            break;
+                        case 5:
+                        match.append('<td style="background-color:green">' + "Penalty"+ '</td>}')
+                            break;
+                        case -1:
+                        match.append('<td style="background-color:red">' + "Finished"+ '</td>')
+                            break;
+                        case -11:
+                        match.append('<td style="background-color:blue">' + "TDB"+ '</td>')
+                            break;
+                        case -12:
+                        match.append('<td style="background-color:red">' + "Terminated"+ '</td>')
+                            break;
+                        case -13:
+                        match.append('<td style="background-color:red">' + "Interrupted"+ '</td>')
+                            break;
+                        case -14:
+                        match.append('<td style="background-color:red; opacity: 0.8;">' + "Postponed"+ '</td>')
+                            break;
+                        default:
+                        match.append('<td style="background-color:red">' + " "+ '</td>')
+                            break;
+                                        }
+                    $('.table').append(match);  
+                });
+            }
+            });
+            });
+</script>
+<body>
+    <div class="container">
+    <div class="title">LIVESCORES!</div>
+    <table class="table">
+		<tr>
+            <th>Home</th>
+            <th>Away</th>
+            <th>Score</th>
+            <th>League</th>
+            <th>Time</th>
+            <th>Live</th>
+			
+		</tr>
+    </table>
+</div>
+</body>
+</html>
